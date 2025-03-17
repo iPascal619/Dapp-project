@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TokenSwift - ERC-20 Token Transfer DApp</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <i class="fas fa-coins"></i>
+                <h1>TokenSwift</h1>
+            </div>
+            <div class="connect-wallet">
+                <button id="connectWallet" class="btn primary">
+                    <i class="fas fa-wallet"></i>
+                    <span id="walletButtonText">Connect Wallet</span>
+                </button>
+            </div>
+        </header>
+
+        <div class="dashboard">
+            <div class="card account-info">
+                <h2>Account Information</h2>
+                <div class="info-row">
+                    <div class="info-label">Account Address</div>
+                    <div class="info-value" id="accountAddress">Not connected</div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">Network</div>
+                    <div class="info-value" id="networkName">Not connected</div>
+                </div>
+                <div class="token-balance">
+                    <div class="balance-label">Token Balance</div>
+                    <div class="balance-value">
+                        <span id="tokenBalance">0</span>
+                        <span class="token-symbol">TST</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card transfer-card">
+                <h2>Transfer Tokens</h2>
+                <form id="transferForm">
+                    <div class="form-group">
+                        <label for="recipientAddress">Recipient Address</label>
+                        <input type="text" id="recipientAddress" placeholder="0x..." required>
+                    </div>
+                    <div class="form-group">
+                        <label for="transferAmount">Amount</label>
+                        <div class="amount-input">
+                            <input type="number" id="transferAmount" placeholder="0.0" min="0" step="0.01" required>
+                            <span class="token-symbol">TST</span>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn primary btn-transfer">
+                        <i class="fas fa-paper-plane"></i> Send Tokens
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <div class="transaction-history card">
+            <h2>Transaction History</h2>
+            <div class="transactions" id="transactionsList">
+                <div class="empty-state">
+                    <i class="fas fa-history"></i>
+                    <p>No transactions yet</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="notification" class="notification">
+            <div class="notification-content">
+                <i id="notificationIcon" class="fas"></i>
+                <span id="notificationMessage"></span>
+            </div>
+            <button id="closeNotification" class="close-notification">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    </div>
+
+    <footer>
+        <p>TokenSwift DApp - ERC-20 Token Transfer Application on Ethereum Test Network built by Pascal Chukwuma Onuoha</p>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/web3/1.8.1/web3.min.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
