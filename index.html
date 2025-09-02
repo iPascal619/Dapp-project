@@ -3,16 +3,51 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TokenSwift - ERC-20 Token Transfer DApp</title>
+    <title>TokenSwift - Professional ERC-20 Token Transfer DApp</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
+    <!-- Theme Toggle -->
+    <div class="theme-toggle">
+        <button id="themeToggle" class="btn-theme">
+            <i class="fas fa-moon"></i>
+        </button>
+    </div>
+
+    <!-- Network Status Bar -->
+    <div class="network-status-bar">
+        <div class="container">
+            <div class="network-info">
+                <span class="network-indicator" id="networkIndicator">
+                    <i class="fas fa-circle"></i>
+                    <span id="currentNetwork">Ethereum Mainnet</span>
+                </span>
+                <span class="network-congestion" id="networkCongestion">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span>Normal</span>
+                </span>
+            </div>
+            <div class="network-switcher">
+                <select id="networkSelector" class="network-select">
+                    <option value="1">Ethereum Mainnet</option>
+                    <option value="137">Polygon</option>
+                    <option value="56">BSC</option>
+                    <option value="42161">Arbitrum</option>
+                    <option value="11155111">Sepolia Testnet</option>
+                </select>
+            </div>
+        </div>
+    </div>
     <div class="container">
         <header>
             <div class="logo">
                 <i class="fas fa-coins"></i>
                 <h1>TokenSwift</h1>
+                <span class="beta-badge">Beta</span>
             </div>
             <div class="connect-wallet">
                 <button id="connectWallet" class="btn primary">
@@ -23,52 +58,218 @@
         </header>
 
         <div class="dashboard">
+            <!-- Enhanced Account Info with Portfolio Analytics -->
             <div class="card account-info">
-                <h2>Account Information</h2>
+                <h2><i class="fas fa-user-circle"></i> Portfolio Overview</h2>
+                
+                <!-- Token Price Display -->
+                <div class="price-section">
+                    <div class="token-price">
+                        <span class="price-label">TST Price</span>
+                        <div class="price-display">
+                            <span id="tokenPrice">$--</span>
+                            <span class="price-change" id="priceChange">
+                                <i class="fas fa-arrow-up"></i>
+                                <span>+0.00%</span>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="portfolio-value">
+                        <span class="portfolio-label">Portfolio Value</span>
+                        <div class="portfolio-amount" id="portfolioValue">$--</div>
+                    </div>
+                </div>
+
+                <!-- Account Information -->
                 <div class="info-row">
-                    <div class="info-label">Account Address</div>
+                    <div class="info-label">
+                        <i class="fas fa-address-card"></i>
+                        Account Address
+                    </div>
                     <div class="info-value" id="accountAddress">Not connected</div>
                 </div>
                 <div class="info-row">
-                    <div class="info-label">Network</div>
+                    <div class="info-label">
+                        <i class="fas fa-network-wired"></i>
+                        Network
+                    </div>
                     <div class="info-value" id="networkName">Not connected</div>
                 </div>
                 <div class="token-balance">
-                    <div class="balance-label">Token Balance</div>
+                    <div class="balance-label">
+                        <i class="fas fa-coins"></i>
+                        Token Balance
+                    </div>
                     <div class="balance-value">
                         <span id="tokenBalance">0</span>
                         <span class="token-symbol">TST</span>
                     </div>
                 </div>
+
+                <!-- Cross-chain Balances -->
+                <div class="cross-chain-balances" id="crossChainBalances">
+                    <h4>Multi-Network Balances</h4>
+                    <div class="chain-balances" id="chainBalances">
+                        <!-- Will be populated dynamically -->
+                    </div>
+                </div>
             </div>
 
             <div class="card transfer-card">
-                <h2>Transfer Tokens</h2>
+                <h2><i class="fas fa-exchange-alt"></i> Transfer Tokens</h2>
+                
+                <!-- Security Warning -->
+                <div class="security-warning" id="securityWarning" style="display: none;">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <span id="securityMessage"></span>
+                </div>
+
+                <!-- Transaction Simulation Preview -->
+                <div class="transaction-preview" id="transactionPreview" style="display: none;">
+                    <h4><i class="fas fa-eye"></i> Transaction Preview</h4>
+                    <div class="preview-details">
+                        <div class="preview-item">
+                            <span>To:</span>
+                            <span id="previewTo">--</span>
+                        </div>
+                        <div class="preview-item">
+                            <span>Amount:</span>
+                            <span id="previewAmount">--</span>
+                        </div>
+                        <div class="preview-item">
+                            <span>Gas Cost:</span>
+                            <span id="previewGasCost">--</span>
+                        </div>
+                        <div class="preview-item">
+                            <span>Total Cost:</span>
+                            <span id="previewTotalCost">--</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Gas Fee Estimator -->
+                <div class="gas-estimator">
+                    <div class="gas-header">
+                        <span><i class="fas fa-gas-pump"></i> Gas Fee Estimate</span>
+                        <button id="refreshGas" class="btn-refresh">
+                            <i class="fas fa-sync-alt"></i>
+                        </button>
+                    </div>
+                    <div class="gas-options">
+                        <div class="gas-option" data-speed="slow">
+                            <div class="gas-speed">Slow</div>
+                            <div class="gas-price" id="slowGas">-- Gwei</div>
+                            <div class="gas-time">~5 min</div>
+                        </div>
+                        <div class="gas-option selected" data-speed="standard">
+                            <div class="gas-speed">Standard</div>
+                            <div class="gas-price" id="standardGas">-- Gwei</div>
+                            <div class="gas-time">~2 min</div>
+                        </div>
+                        <div class="gas-option" data-speed="fast">
+                            <div class="gas-speed">Fast</div>
+                            <div class="gas-price" id="fastGas">-- Gwei</div>
+                            <div class="gas-time">~30 sec</div>
+                        </div>
+                    </div>
+                    <div class="estimated-cost">
+                        Estimated Cost: <span id="estimatedCost">$--</span>
+                    </div>
+                </div>
+
                 <form id="transferForm">
                     <div class="form-group">
-                        <label for="recipientAddress">Recipient Address</label>
-                        <input type="text" id="recipientAddress" placeholder="0x..." required>
+                        <label for="recipientAddress">
+                            <i class="fas fa-user"></i>
+                            Recipient Address
+                        </label>
+                        <div class="address-input-container">
+                            <input type="text" id="recipientAddress" placeholder="0x..." required>
+                            <button type="button" id="openAddressBook" class="btn-address-book">
+                                <i class="fas fa-address-book"></i>
+                            </button>
+                            <button type="button" id="validateAddress" class="btn-validate">
+                                <i class="fas fa-shield-alt"></i>
+                            </button>
+                        </div>
+                        <div class="address-validation" id="addressValidation"></div>
                     </div>
                     <div class="form-group">
-                        <label for="transferAmount">Amount</label>
+                        <label for="transferAmount">
+                            <i class="fas fa-coins"></i>
+                            Amount
+                        </label>
                         <div class="amount-input">
                             <input type="number" id="transferAmount" placeholder="0.0" min="0" step="0.01" required>
                             <span class="token-symbol">TST</span>
                         </div>
                     </div>
+                    
+                    <!-- Simulation Button -->
+                    <button type="button" id="simulateTransaction" class="btn secondary">
+                        <i class="fas fa-eye"></i>
+                        <span>Preview Transaction</span>
+                    </button>
+                    
                     <button type="submit" class="btn primary btn-transfer">
-                        <i class="fas fa-paper-plane"></i> Send Tokens
+                        <i class="fas fa-paper-plane"></i> 
+                        <span>Send Tokens</span>
                     </button>
                 </form>
             </div>
         </div>
 
+        <!-- Price Chart Section -->
+        <div class="card chart-section">
+            <h2><i class="fas fa-chart-line"></i> Price Chart</h2>
+            <div class="chart-controls">
+                <div class="time-periods">
+                    <button class="time-btn active" data-period="1h">1H</button>
+                    <button class="time-btn" data-period="24h">24H</button>
+                    <button class="time-btn" data-period="7d">7D</button>
+                    <button class="time-btn" data-period="30d">30D</button>
+                </div>
+            </div>
+            <div class="chart-container">
+                <canvas id="priceChart"></canvas>
+            </div>
+        </div>
+        </div>
+
+        <!-- Enhanced Transaction History with Status Tracking -->
         <div class="transaction-history card">
-            <h2>Transaction History</h2>
+            <h2><i class="fas fa-history"></i> Transaction History</h2>
+            <div class="transaction-filters">
+                <div class="filter-buttons">
+                    <button class="filter-btn active" data-filter="all">All</button>
+                    <button class="filter-btn" data-filter="pending">Pending</button>
+                    <button class="filter-btn" data-filter="confirmed">Confirmed</button>
+                    <button class="filter-btn" data-filter="failed">Failed</button>
+                </div>
+                <button id="exportTransactions" class="btn secondary">
+                    <i class="fas fa-download"></i> Export CSV
+                </button>
+            </div>
             <div class="transactions" id="transactionsList">
                 <div class="empty-state">
-                    <i class="fas fa-history"></i>
+                    <i class="fas fa-clock"></i>
                     <p>No transactions yet</p>
+                    <small>Your transaction history will appear here</small>
+                </div>
+            </div>
+        </div>
+
+        <!-- Token Allowance Manager -->
+        <div class="card allowance-manager">
+            <h2><i class="fas fa-shield-alt"></i> Token Allowances</h2>
+            <p class="allowance-description">
+                Manage and revoke token approvals for enhanced security
+            </p>
+            <div id="allowancesList" class="allowances-list">
+                <div class="empty-allowances">
+                    <i class="fas fa-shield-check"></i>
+                    <p>No active allowances</p>
+                    <small>Token approvals will appear here</small>
                 </div>
             </div>
         </div>
@@ -82,13 +283,126 @@
                 <i class="fas fa-times"></i>
             </button>
         </div>
+
+        <!-- Address Book Modal -->
+        <div id="addressBookModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3><i class="fas fa-address-book"></i> Address Book</h3>
+                    <button class="modal-close" id="closeAddressBook">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="address-book-controls">
+                        <button id="addNewAddress" class="btn primary">
+                            <i class="fas fa-plus"></i> Add New Address
+                        </button>
+                        <div class="search-box">
+                            <i class="fas fa-search"></i>
+                            <input type="text" id="searchAddresses" placeholder="Search addresses...">
+                        </div>
+                    </div>
+                    <div id="addressBookList" class="address-book-list">
+                        <div class="empty-address-book">
+                            <i class="fas fa-address-book"></i>
+                            <p>No saved addresses yet</p>
+                            <small>Add frequently used addresses for quick access</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Add Address Modal -->
+        <div id="addAddressModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3><i class="fas fa-plus"></i> Add New Address</h3>
+                    <button class="modal-close" id="closeAddAddress">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="addAddressForm">
+                        <div class="form-group">
+                            <label for="addressName">Name</label>
+                            <input type="text" id="addressName" placeholder="e.g., John's Wallet" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="addressValue">Address</label>
+                            <input type="text" id="addressValue" placeholder="0x..." required>
+                        </div>
+                        <div class="form-group">
+                            <label for="addressNote">Note (optional)</label>
+                            <textarea id="addressNote" placeholder="Add a note about this address..."></textarea>
+                        </div>
+                        <div class="modal-actions">
+                            <button type="button" class="btn secondary" id="cancelAddAddress">Cancel</button>
+                            <button type="submit" class="btn primary">Save Address</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!-- Transaction Status Modal -->
+        <div id="transactionStatusModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3><i class="fas fa-clock"></i> Transaction Status</h3>
+                    <button class="modal-close" id="closeTransactionStatus">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="transaction-status-tracker">
+                        <div class="status-steps">
+                            <div class="status-step active" id="step-submitted">
+                                <div class="step-icon"><i class="fas fa-paper-plane"></i></div>
+                                <div class="step-text">Submitted</div>
+                            </div>
+                            <div class="status-step" id="step-pending">
+                                <div class="step-icon"><i class="fas fa-hourglass-half"></i></div>
+                                <div class="step-text">Pending</div>
+                            </div>
+                            <div class="status-step" id="step-confirmed">
+                                <div class="step-icon"><i class="fas fa-check-circle"></i></div>
+                                <div class="step-text">Confirmed</div>
+                            </div>
+                        </div>
+                        <div class="transaction-details-modal">
+                            <div class="detail-row">
+                                <span>Transaction Hash:</span>
+                                <span id="modalTxHash" class="hash-text">--</span>
+                            </div>
+                            <div class="detail-row">
+                                <span>Block Confirmations:</span>
+                                <span id="modalConfirmations">-- / 12</span>
+                            </div>
+                            <div class="detail-row">
+                                <span>Gas Used:</span>
+                                <span id="modalGasUsed">--</span>
+                            </div>
+                            <div class="detail-row">
+                                <span>Status:</span>
+                                <span id="modalStatus" class="status-badge">--</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <footer>
-        <p>TokenSwift DApp - ERC-20 Token Transfer Application on Ethereum Test Network built by Pascal Chukwuma Onuoha</p>
+        <div class="footer-content">
+            <p><i class="fas fa-code"></i> TokenSwift DApp - Professional ERC-20 Token Transfer Application</p>
+            <p><i class="fas fa-ethereum"></i> Built on Ethereum Test Network by <strong>Pascal Chukwuma Onuoha</strong></p>
+        </div>
     </footer>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/web3/1.8.1/web3.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="app.js"></script>
 </body>
 </html>
